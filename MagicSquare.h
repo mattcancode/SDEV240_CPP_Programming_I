@@ -1,6 +1,3 @@
-#include <iosfwd>
-#include <vector>
-
 // base MagicSquare class - it serves as a base class for the other classes
 // and handles management of the call data, plus it includes an interface
 // common any child classes
@@ -8,9 +5,21 @@
 class MagicSquare
 {
 public:
+    // forward declaration for the underlying Cells class with square data
+    // (this allows us to hide the original vector stuff that was here before)
+    class Cells;
+
+    // the constructor is protected to prevent instantiation of the base class
+    // child classes will call this to initialize the square's data
+    MagicSquare(unsigned size);
+
     virtual ~MagicSquare();
 
-    unsigned getSize();
+    // returns the size of the magic square
+    unsigned getSize() const;
+
+    // gets the value of the cell at the specified row and column
+    unsigned cell(unsigned row, unsigned column) const;
 
     // call this method to solve the magic square (ordinarily, it would make
     // sense to simply do this at creation, but separate for discussion)
@@ -20,21 +29,12 @@ public:
     void dump(std::ostream& out);
 
 protected:
-    // don't really want to have to keep typing this so putting in a typedef
-    typedef std::vector<std::vector<unsigned>> Cells;
-
-    // the constructor is protected to prevent instantiation of the base class
-    // child classes will call this to initialize the square's data
-    MagicSquare(unsigned size);
-
     // child classes need to implement this method to actually solve the square
     virtual void fill(Cells& cells) = 0;
 
 private:
     const unsigned size;
 
-    // using a vector of vectors to store the matrix of square cells - a multi-
-    // dimensional array is less cumbersome but using C++ vector
     Cells* pCells;
 };
 
